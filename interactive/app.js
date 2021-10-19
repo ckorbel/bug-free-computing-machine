@@ -64,8 +64,23 @@ async function draw() {
     ctr
       .selectAll("rect")
       .data(newDataSet)
-      .join("rect")
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("width", (d) =>
+              d3.max([0, xScale(d.x1) - xScale(d.x0) - padding])
+            )
+            .attr("height", (d) => dimensions.ctrHeight - yScale(yAccessor(d)))
+            .attr("x", (d) => xScale(d.x0))
+            .attr("y", (d) => yScale(yAccessor(d)))
+            .attr("fill", "#01c5c4"),
+        (update) => update,
+        (exit) =>
+          exit.transition().attr("y", dimensions.ctrHeight).attr("height", 0)
+      )
       .transition()
+      .duration(1500)
       .attr("width", (d) => d3.max([0, xScale(d.x1) - xScale(d.x0) - padding]))
       .attr("height", (d) => dimensions.ctrHeight - yScale(yAccessor(d)))
       .attr("x", (d) => xScale(d.x0))
